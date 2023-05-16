@@ -1,5 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'main_game.dart';
 
@@ -23,8 +24,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var initialEntitiesController = TextEditingController(text: '5');
+  var game = MainGame(initialEntities: 5);
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +44,37 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Row(
         children: [
-          const Expanded(
+          Expanded(
             flex: 2,
-            child: GameWidget.controlled(gameFactory: MainGame.new),
+            child: GameWidget(game: game),
           ),
           Expanded(
             flex: 1,
-            child: Container(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    controller: initialEntitiesController,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        game = MainGame(
+                          initialEntities: int.parse(
+                            initialEntitiesController.text,
+                          ),
+                        );
+                      });
+                    },
+                    child: const Text('Run'),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

@@ -6,7 +6,7 @@ class EntityComponent extends PositionComponent {
     super.position,
     super.size,
     this.hue = 0.0,
-    this.saturation = 0.0,
+    this.saturation = 1.0,
     this.brightness = 1.0,
   }) : super();
 
@@ -37,7 +37,8 @@ class EntityComponent extends PositionComponent {
 
     final paint = Paint()
       ..color = HSVColor.fromAHSV(1.0, hue, saturation, brightness).toColor()
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
 
     final w = width + vw;
     final h = height + vh;
