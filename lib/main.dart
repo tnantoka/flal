@@ -32,8 +32,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var initialEntitiesController = TextEditingController(text: '5');
-  var game = MainGame(initialEntities: 5);
+  var initialCreaturesController = TextEditingController(text: '5');
+  var initialFoodsController = TextEditingController(text: '5');
+
+  var game = MainGame(initialCreatures: 5, initialFoods: 5);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             flex: 2,
-            child: GameWidget(game: game),
+            child: ClipRect(
+              child: GameWidget(game: game),
+            ),
           ),
           Expanded(
             flex: 1,
@@ -57,19 +61,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   TextField(
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    controller: initialEntitiesController,
+                    controller: initialCreaturesController,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    controller: initialFoodsController,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        game = MainGame(
-                          initialEntities: int.parse(
-                            initialEntitiesController.text,
-                          ),
-                        );
-                      });
-                    },
+                    onPressed: () => _updateGame(),
                     child: const Text('Run'),
                   ),
                 ],
@@ -79,5 +81,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  _updateGame() {
+    setState(() {
+      game = MainGame(
+        initialCreatures: int.parse(
+          initialCreaturesController.text,
+        ),
+        initialFoods: int.parse(
+          initialFoodsController.text,
+        ),
+      );
+    });
   }
 }
