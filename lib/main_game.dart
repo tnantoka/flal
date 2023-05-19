@@ -7,7 +7,7 @@ import 'package:flame/game.dart';
 import 'creature.dart';
 import 'food.dart';
 
-class MainGame extends FlameGame {
+class MainGame extends FlameGame with HasCollisionDetection {
   MainGame({required this.initialCreatures, required this.initialFoods})
       : super();
 
@@ -19,6 +19,7 @@ class MainGame extends FlameGame {
   Future<void> onLoad() async {
     super.onLoad();
 
+    // debugMode = true;
     await add(
       FpsTextComponent(),
     );
@@ -37,16 +38,20 @@ class MainGame extends FlameGame {
     }
 
     for (var i = 0; i < initialFoods; i++) {
-      final position = Vector2(
-        random.nextDouble() * size.x,
-        random.nextDouble() * size.y,
-      );
-
-      await add(
-        Food(
-          position: position,
-        ),
-      );
+      addFood();
     }
+  }
+
+  addFood() {
+    final position = Vector2(
+      random.nextDouble() * size.x,
+      random.nextDouble() * size.y,
+    );
+
+    add(
+      Food(
+        position: position,
+      ),
+    );
   }
 }

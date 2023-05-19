@@ -33,9 +33,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var initialCreaturesController = TextEditingController(text: '5');
-  var initialFoodsController = TextEditingController(text: '5');
+  var initialFoodsController = TextEditingController(text: '100');
 
-  var game = MainGame(initialCreatures: 5, initialFoods: 5);
+  var game = MainGame(initialCreatures: 5, initialFoods: 100);
 
   @override
   Widget build(BuildContext context) {
