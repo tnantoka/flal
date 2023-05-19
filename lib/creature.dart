@@ -6,21 +6,32 @@ import 'package:flame/effects.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
+import 'main_game.dart';
+
 enum CreatureType {
   a,
   b,
 }
 
-class Creature extends PositionComponent with CollisionCallbacks {
+enum CreatureSex {
+  m,
+  f,
+}
+
+class Creature extends PositionComponent
+    with CollisionCallbacks, HasGameRef<MainGame> {
   Creature({
     super.position,
     required this.type,
+    required this.sex,
   }) : super(size: Vector2(50, 50), priority: 2);
 
   final random = Random();
   final maxAge = 1000;
   final speed = 100.0;
+  final reproductionRate = 0.1;
   final CreatureType type;
+  final CreatureSex sex;
 
   var age = 0;
   var initialLife = 1000;
@@ -156,10 +167,19 @@ class Creature extends PositionComponent with CollisionCallbacks {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is Creature && other.type != type) {
-      final ratio = 0.1;
-      other.subLife(ratio);
-      subLife(ratio);
+    if (other is Creature) {
+      if (other.type != type) {
+        final ratio = 0.1;
+        other.subLife(ratio);
+        subLife(ratio);
+      }
+
+      if (other.type == type &&
+          other.sex != sex &&
+          other.isReproductive() &&
+          isReproductive()) {
+        game.addCreature(type);
+      }
     }
   }
 
@@ -173,5 +193,11 @@ class Creature extends PositionComponent with CollisionCallbacks {
     }
 
     life = life - (initialLife.toDouble() * ratio).toInt();
+  }
+
+  bool isReproductive() {
+    return age > maxAge * 0.1 &&
+        life > initialLife * 0.5 &&
+        random.nextDouble() < reproductionRate;
   }
 }

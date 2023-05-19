@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
 
 import 'creature.dart';
 import 'food.dart';
@@ -63,6 +62,10 @@ Foods: ${children.whereType<Food>().length}''';
   }
 
   addCreature(CreatureType type) {
+    if (children.whereType<Creature>().length > 100) {
+      return;
+    }
+
     final position = Vector2(
       random.nextDouble() * size.x,
       random.nextDouble() * size.y,
@@ -72,6 +75,7 @@ Foods: ${children.whereType<Food>().length}''';
       Creature(
         position: position,
         type: type,
+        sex: random.nextBool() ? CreatureSex.m : CreatureSex.f,
       ),
     );
   }
