@@ -32,10 +32,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var initialCreaturesController = TextEditingController(text: '5');
+  var initialCreaturesAController = TextEditingController(text: '20');
+  var initialCreaturesBController = TextEditingController(text: '20');
   var initialFoodsController = TextEditingController(text: '100');
 
-  var game = MainGame(initialCreatures: 5, initialFoods: 100);
+  var game = MainGame(
+    initialCreaturesA: 20,
+    initialCreaturesB: 20,
+    initialFoods: 100,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +66,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   TextField(
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    controller: initialCreaturesController,
+                    controller: initialCreaturesAController,
+                    decoration: const InputDecoration(
+                      labelText: 'Creatures A',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    controller: initialCreaturesBController,
+                    decoration: const InputDecoration(
+                      labelText: 'Creatures B',
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     controller: initialFoodsController,
+                    decoration: const InputDecoration(
+                      labelText: 'Foods',
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -86,8 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
   _updateGame() {
     setState(() {
       game = MainGame(
-        initialCreatures: int.parse(
-          initialCreaturesController.text,
+        initialCreaturesA: int.parse(
+          initialCreaturesAController.text,
+        ),
+        initialCreaturesB: int.parse(
+          initialCreaturesBController.text,
         ),
         initialFoods: int.parse(
           initialFoodsController.text,

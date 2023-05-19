@@ -6,14 +6,21 @@ import 'package:flame/effects.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
-class Creature extends PositionComponent {
+enum CreatureType {
+  a,
+  b,
+}
+
+class Creature extends PositionComponent with CollisionCallbacks {
   Creature({
     super.position,
+    required this.type,
   }) : super(size: Vector2(50, 50), priority: 2);
 
   final random = Random();
-  final maxAge = 100;
+  final maxAge = 1000;
   final speed = 100.0;
+  final CreatureType type;
 
   var age = 0;
   var initialLife = 1000;
@@ -51,7 +58,7 @@ class Creature extends PositionComponent {
     if (life > 0) {
       age++;
       life--;
-      if (life == 0) {
+      if (life == 0 || age >= maxAge) {
         add(RemoveEffect(delay: 0.3));
       }
     }
@@ -76,7 +83,7 @@ class Creature extends PositionComponent {
       ageRect,
       Paint()
         ..color = Colors.grey.withOpacity(
-          1 - min(1, age * 0.004),
+          1 - min(1, age * 0.001),
         ),
     );
 
@@ -94,6 +101,30 @@ class Creature extends PositionComponent {
       ),
       border,
     );
+
+    if (type == CreatureType.a) {
+      canvas.drawLine(
+        Offset(-width * 0.5, -height * 0.5),
+        Offset(width * 0.5, height * 0.3),
+        border,
+      );
+      canvas.drawLine(
+        Offset(width * 0.5, -height * 0.5),
+        Offset(-width * 0.5, height * 0.3),
+        border,
+      );
+    } else {
+      canvas.drawLine(
+        Offset(0, -height * 0.5),
+        Offset(0, height * 0.3),
+        border,
+      );
+      canvas.drawLine(
+        Offset(width * 0.5, -height * 0.1),
+        Offset(-width * 0.5, -height * 0.1),
+        border,
+      );
+    }
 
     final lifeRect = Rect.fromLTWH(
       -width * 0.5,
@@ -121,7 +152,26 @@ class Creature extends PositionComponent {
     );
   }
 
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+
+    if (other is Creature && other.type != type) {
+      final ratio = 0.1;
+      other.subLife(ratio);
+      subLife(ratio);
+    }
+  }
+
   addLife(double ratio) {
     life = min(initialLife, life + (initialLife.toDouble() * ratio).toInt());
+  }
+
+  subLife(double ratio) {
+    if (life <= initialLife * ratio) {
+      return;
+    }
+
+    life = life - (initialLife.toDouble() * ratio).toInt();
   }
 }
