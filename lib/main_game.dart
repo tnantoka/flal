@@ -12,11 +12,21 @@ class MainGame extends FlameGame with HasCollisionDetection {
     required this.initialCreaturesA,
     required this.initialCreaturesB,
     required this.initialFoods,
+    required this.initialLife,
+    required this.maxAge,
+    required this.foodRatio,
+    required this.battleRatio,
+    required this.reproductionRate,
   }) : super();
 
   final int initialCreaturesA;
   final int initialCreaturesB;
   final int initialFoods;
+  final int initialLife;
+  final int maxAge;
+  final double foodRatio;
+  final double battleRatio;
+  final double reproductionRate;
   final random = Random();
   late final TextBoxComponent infoText;
 
@@ -76,11 +86,20 @@ Foods: ${children.whereType<Food>().length}''';
         position: position,
         type: type,
         sex: random.nextBool() ? CreatureSex.m : CreatureSex.f,
+        initialLife: initialLife,
+        maxAge: maxAge,
+        foodRatio: foodRatio,
+        battleRatio: battleRatio,
+        reproductionRate: reproductionRate,
       ),
     );
   }
 
   addFood() {
+    if (children.whereType<Food>().length > initialFoods * 2) {
+      return;
+    }
+
     final position = Vector2(
       random.nextDouble() * size.x,
       random.nextDouble() * size.y,

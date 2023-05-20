@@ -6,6 +6,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
+import 'food.dart';
 import 'main_game.dart';
 
 enum CreatureType {
@@ -24,18 +25,27 @@ class Creature extends PositionComponent
     super.position,
     required this.type,
     required this.sex,
-  }) : super(size: Vector2(50, 50), priority: 2);
+    required this.initialLife,
+    required this.maxAge,
+    required this.foodRatio,
+    required this.battleRatio,
+    required this.reproductionRate,
+  }) : super(size: Vector2(50, 50), priority: 2) {
+    life = initialLife;
+  }
 
   final random = Random();
-  final maxAge = 1000;
+  final int maxAge;
   final speed = 100.0;
-  final reproductionRate = 0.1;
+  final double reproductionRate;
   final CreatureType type;
   final CreatureSex sex;
+  final double foodRatio;
+  final double battleRatio;
 
   var age = 0;
-  var initialLife = 1000;
-  var life = 1000;
+  final int initialLife;
+  var life = 0;
   var elapsed = 0.0;
 
   var velocity = Vector2.zero();
@@ -169,9 +179,7 @@ class Creature extends PositionComponent
 
     if (other is Creature) {
       if (other.type != type) {
-        final ratio = 0.1;
-        other.subLife(ratio);
-        subLife(ratio);
+        subLife(battleRatio);
       }
 
       if (other.type == type &&
@@ -180,6 +188,10 @@ class Creature extends PositionComponent
           isReproductive()) {
         game.addCreature(type);
       }
+    } else if (other is Food) {
+      addLife(foodRatio);
+      game.addFood();
+      other.removeFromParent();
     }
   }
 
